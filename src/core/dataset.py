@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 import random
 from pathlib import Path
-
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
@@ -193,6 +193,65 @@ def get_dual_train_transform(image_size: int = 224):
         transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
     ])
 
+def get_frequency_robust_train_transform(image_size: int = 224):
+    """Stronger degradation augmentation for generator generalization."""
+    return transforms.Compose([
+        transforms.RandomResizedCrop(
+            image_size,
+            scale=(0.70, 1.0),
+        ),
+        transforms.RandomHorizontalFlip(),
+
+        RandomJPEG(
+            probability=0.65,
+            min_quality=25,
+            max_quality=95,
+        ),
+
+        transforms.RandomApply(
+            [
+                transforms.GaussianBlur(
+                    kernel_size=5,
+                    sigma=(0.1, 1.5),
+                )
+            ],
+            p=0.30,
+        ),
+
+        transforms.RandomApply(
+            [
+                transforms.RandomGrayscale(
+                    p=1.0,
+                )
+            ],
+            p=0.08,
+        ),
+
+        transforms.ColorJitter(
+            brightness=0.15,
+            contrast=0.15,
+            saturation=0.10,
+        ),
+
+        transforms.ToTensor(),
+
+        transforms.RandomApply(
+            [
+                transforms.Lambda(
+                    lambda x: (
+                        x
+                        + torch.randn_like(x) * 0.01
+                    ).clamp(0.0, 1.0)
+                )
+            ],
+            p=0.25,
+        ),
+
+        transforms.Normalize(
+            mean=(0.485, 0.456, 0.406),
+            std=(0.229, 0.224, 0.225),
+        ),
+    ])
 
 def get_dual_val_transform(image_size: int = 224):
     return transforms.Compose([
