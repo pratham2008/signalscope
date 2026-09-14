@@ -26,6 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.core.dataset import ManifestDataset
+from src.core.frequency_hybrid import HybridFrequencyEncoder
 from scripts.train_clip_fft import (
     ClipFFTClassifier,
     MultiViewTransform,
@@ -141,10 +142,30 @@ def main() -> None:
 
     # The no-interaction ablation has a 256-dimensional
     # fusion input instead of the baseline's 257 dimensions.
+    model_name = payload.get(
+        "model_name",
+        "clip_fft_fusion",
+    )
+
     no_interaction = (
-        payload.get("model_name")
+        model_name
         == "clip_fft_no_interaction"
     )
+
+    hybrid = (
+        model_name
+        == "clip_fft_hybrid"
+    )
+
+    if hybrid:
+        model.frequency_encoder = HybridFrequencyEncoder(
+            int(
+                model_config.get(
+                    "frequency_width",
+                    32,
+                )
+            )
+        )
 
     if no_interaction:
         model.fusion = torch.nn.Sequential(
