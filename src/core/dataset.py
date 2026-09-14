@@ -80,6 +80,91 @@ class CIFAKEDataset(Dataset):
 
         return image, label
 
+class ManifestDataset(Dataset):
+    """
+    Dataset loader for a generator-aware CSV manifest.
+
+    Expected CSV columns:
+        path,generator,label,split
+
+    Labels:
+        0 = REAL
+        1 = FAKE / AI-generated
+    """
+
+    def __init__(
+    self,
+    manifest_path,
+    split,
+    transform=None,
+    generators=None,
+    max_per_class=None,
+):
+        import csv
+
+        self.manifest_path = Path(manifest_path)
+        self.transform = transform
+        self.samples = []
+
+        if not self.manifest_path.exists():
+            raise FileNotFoundError(
+                f"Manifest not found: {self.manifest_path}"
+            )
+
+        allowed_generators = set(generators) if generators is not None else None
+
+        with self.manifest_path.open(
+            "r",
+            newline="",
+            encoding="utf-8",
+        ) as file:
+            reader = csv.DictReader(file)
+
+            required_columns = {"path", "label", "generator", "split"}
+            missing = required_columns - set(reader.fieldnames or [])
+
+            if missing:
+                raise ValueError(
+                    f"Manifest is missing columns: {sorted(missing)}"
+                )
+
+            for row in reader:
+                if row["split"] != split:
+                    continue
+
+                if (
+                    allowed_generators is not None
+                    and row["generator"] not in allowed_generators
+                ):
+                    continue
+
+                image_path = Path(row["path"])
+
+                if not image_path.exists():
+                    raise FileNotFoundError(
+                        f"Image referenced by manifest does not exist: {image_path}"
+                    )
+
+                self.samples.append(
+                    (
+                        image_path,
+                        int(row["label"]),
+                        row["generator"],
+                    )
+                )
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, index):
+        image_path, label, generator = self.samples[index]
+
+        image = Image.open(image_path).convert("RGB")
+
+        if self.transform is not None:
+            image = self.transform(image)
+
+        return image, label, generator
 
 def get_train_transform():
     return transforms.Compose([
