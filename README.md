@@ -1,5 +1,9 @@
 # SignalScope
 
+## Submission Materials
+
+- 📄 **One-Page Model Report:** [View Report](https://docs.google.com/document/d/1ZxnaEloS0hog-_vpLrDbG8kZhfRy9NFg/edit?usp=sharing&ouid=109365953735455283867&rtpof=true&sd=true)
+
 **Telling Real From Synthetic in the Age of Generative Media**
 
 SignalScope is a computer-vision system for assessing whether an input image is **likely authentic / real** or **likely AI-generated**. It is designed around the generalisation problem: performance should not depend only on generators seen during training.
