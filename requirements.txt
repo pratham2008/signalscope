@@ -4,3 +4,7 @@ numpy>=1.26
 Pillow>=10.0
 matplotlib>=3.8
 gradio>=5.0
+fastapi>=0.110
+uvicorn>=0.27
+python-multipart>=0.0.9
+open_clip_torch>=3.0

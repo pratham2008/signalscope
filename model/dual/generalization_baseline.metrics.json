@@ -1,0 +1,14 @@
+{
+  "samples": 16000,
+  "roc_auc": 0.898722203125,
+  "accuracy": 0.777375,
+  "macro_f1": 0.7705371468036757,
+  "false_positive_rate": 0.05,
+  "threshold": 0.8309542536735536,
+  "confusion_matrix": {
+    "tn": 7600,
+    "fp": 400,
+    "fn": 3162,
+    "tp": 4838
+  }
+}

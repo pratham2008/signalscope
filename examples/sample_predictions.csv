@@ -1,0 +1,5 @@
+image_id,true_label,predicted_prob,generator
+real_001.jpg,REAL,0.08,reference
+real_002.jpg,REAL,0.31,reference
+fake_001.jpg,FAKE,0.76,reference
+fake_002.jpg,FAKE,0.94,reference
