@@ -1,15 +1,12 @@
 "use client";
 
-import {
-  ChangeEvent,
-  DragEvent,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://127.0.0.1:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 type ExplanationEvidence = {
   base_probability: number;
@@ -30,32 +27,59 @@ type Prediction = {
   explanation_text?: string;
 };
 
+function UploadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-[1.65] stroke-linecap-round stroke-linejoin-round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+    </svg>
+  );
+}
+
+function ImageIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.8]">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <polyline points="21 15 16 10 5 21" />
+    </svg>
+  );
+}
+
+function ClearIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-[1.8]">
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
+function PlaceholderIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-[1.65] stroke-linecap-round stroke-linejoin-round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4M12 8h.01" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [prediction, setPrediction] =
-    useState<Prediction | null>(null);
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
 
-  const [dragging, setDragging] =
-    useState(false);
-  const [loading, setLoading] =
-    useState(false);
-  const [error, setError] =
-    useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function selectFile(
-    selectedFile: File | undefined
-  ) {
+  function selectFile(selectedFile: File | undefined) {
     if (!selectedFile) {
       return;
     }
 
     if (!selectedFile.type.startsWith("image/")) {
-      setError(
-        "Please select a valid image file."
-      );
+      setError("Please select a valid image file.");
       return;
     }
 
@@ -63,33 +87,22 @@ export default function Home() {
     setPrediction(null);
     setError(null);
 
-    const url =
-      URL.createObjectURL(selectedFile);
-
+    const url = URL.createObjectURL(selectedFile);
     setPreview(url);
   }
 
-  function handleFileChange(
-    event: ChangeEvent<HTMLInputElement>
-  ) {
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     selectFile(event.target.files?.[0]);
   }
 
-  function handleDrop(
-    event: DragEvent<HTMLDivElement>
-  ) {
+  function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setDragging(false);
-
-    selectFile(
-      event.dataTransfer.files?.[0]
-    );
+    selectFile(event.dataTransfer.files?.[0]);
   }
 
   async function analyzeImage() {
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     setLoading(true);
     setError(null);
@@ -98,29 +111,21 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(
-        `${API_URL}/predict`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${API_URL}/predict`, {
+        method: "POST",
+        body: formData,
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail ||
-            "Prediction failed."
-        );
+        throw new Error(data.detail || "Prediction failed.");
       }
 
       setPrediction(data);
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to connect to SignalScope."
+        err instanceof Error ? err.message : "Unable to connect to SignalScope."
       );
     } finally {
       setLoading(false);
@@ -142,441 +147,334 @@ export default function Home() {
     }
   }
 
-  const isAi =
-    prediction?.label ===
-    "Likely AI-Generated";
+  const isAi = prediction?.label === "Likely AI-Generated";
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-8 md:px-10 lg:px-12">
-        <header className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">
-              SignalScope
-            </p>
+    <main className="min-h-screen bg-noise bg-mesh">
+      <div className="max-w-[1440px] mx-auto px-5 lg:px-10 py-6 lg:py-8">
+        <header className="flex items-center justify-between border-b border-border pb-4 mb-10">
+          <div className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight text-foreground">
+            <div className="grid w-[25px] h-[25px] place-items-center border border-border rounded-md bg-secondary">
+              <span className="relative w-[9px] h-[9px] border-2 border-primary rounded-full after:content-[''] after:absolute after:w-[3px] after:h-[3px] after:bg-primary after:rounded-full after:top-[1px] after:right-[1px]" />
+            </div>
+            SignalScope
+          </div>
 
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-              AI-generated image detection
+          <Badge variant="secondary" className="gap-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground bg-transparent border-border">
+            <div className="w-[7px] h-[7px] rounded-full bg-primary shadow-[0_0_0_3px_rgba(255,255,255,0.1)]" />
+            CLIP + FFT
+          </Badge>
+        </header>
+
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-8 pb-8">
+          <div>
+            <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase leading-tight">Generalization-first detection</p>
+            <h1 className="max-w-[720px] mt-2 text-[31px] md:text-[clamp(31px,4vw,52px)] font-semibold tracking-[-0.05em] leading-[1.06]">
+              Understand whether an image is likely real or AI-generated.
             </h1>
           </div>
 
-          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-slate-300">
-            CLIP + FFT
-          </div>
-        </header>
+          <p className="max-w-[390px] m-0 text-muted-foreground text-[14px] leading-[1.65]">
+            Upload an image and SignalScope analyzes semantic and frequency
+            evidence to estimate the likelihood that it was generated by AI.
+          </p>
+        </div>
 
-        <section className="grid flex-1 gap-8 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div>
-            <div className="max-w-2xl">
-              <p className="text-sm font-medium text-cyan-400">
-                Generalization-first detection
-              </p>
-
-              <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-                Understand whether an image is
-                likely real or AI-generated.
-              </h2>
-
-              <p className="mt-5 max-w-xl text-base leading-7 text-slate-400">
-                Upload an image and SignalScope
-                analyzes semantic and frequency
-                evidence to estimate the likelihood
-                that it was generated by AI.
-              </p>
-            </div>
-
-            <div
-              onDragOver={(event) => {
-                event.preventDefault();
-                setDragging(true);
-              }}
-              onDragLeave={() =>
-                setDragging(false)
-              }
-              onDrop={handleDrop}
-              onClick={() =>
-                inputRef.current?.click()
-              }
-              className={`mt-10 cursor-pointer rounded-3xl border border-dashed p-8 transition ${
-                dragging
-                  ? "border-cyan-400 bg-cyan-400/10"
-                  : "border-white/15 bg-white/[0.03] hover:border-white/30 hover:bg-white/[0.05]"
-              }`}
-            >
-              <input
-                ref={inputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/bmp"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-
-              <div className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-2xl">
-                  ↑
-                </div>
-
-                <h3 className="mt-5 text-lg font-medium">
-                  Drop an image here
-                </h3>
-
-                <p className="mt-2 text-sm text-slate-500">
-                  or click to browse
-                </p>
-
-                <p className="mt-5 text-xs text-slate-600">
-                  JPEG, PNG, WebP, or BMP
-                </p>
+        <div className="grid grid-cols-1 lg:grid-cols-[1.08fr_0.92fr] gap-5 items-start mt-4">
+          <Card className="border-border bg-card shadow-sm rounded-[14px]">
+            <CardHeader className="flex flex-row items-start justify-between pb-4">
+              <div>
+                <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase">01 / Source</p>
+                <CardTitle className="mt-1.5 text-[17px] font-semibold tracking-tight">Image Input</CardTitle>
               </div>
-            </div>
-
-            {file && (
-              <div className="mt-4 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">
-                    {file.name}
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    {(file.size / 1024 / 1024).toFixed(
-                      2
-                    )}{" "}
-                    MB
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    clearImage();
+              {file && (
+                <Button variant="ghost" size="sm" onClick={clearImage} className="text-muted-foreground h-8 px-2 text-xs flex gap-1">
+                  <ClearIcon /> Clear
+                </Button>
+              )}
+            </CardHeader>
+            <CardContent>
+              {!file ? (
+                <div
+                  className={`relative flex flex-col items-center justify-center w-full min-h-[300px] border border-dashed rounded-lg cursor-pointer transition-all duration-200 ${dragging ? "border-primary bg-secondary/50 scale-[0.997]" : "border-border bg-muted/20 hover:border-muted-foreground hover:bg-muted/30"}`}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    setDragging(true);
                   }}
-                  className="ml-4 rounded-lg px-3 py-2 text-xs text-slate-400 transition hover:bg-white/10 hover:text-white"
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={handleDrop}
+                  onClick={() => inputRef.current?.click()}
                 >
-                  Remove
-                </button>
-              </div>
-            )}
-
-            {error && (
-              <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-300">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="button"
-              disabled={!file || loading}
-              onClick={analyzeImage}
-              className="mt-6 w-full rounded-2xl bg-cyan-400 px-5 py-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {loading
-                ? "Analyzing image..."
-                : "Analyze Image"}
-            </button>
-
-            {loading && (
-              <p className="mt-3 text-center text-xs text-slate-500">
-                Running the detector and generating model evidence...
-              </p>
-            )}
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-2xl">
-            <div className="overflow-hidden rounded-2xl bg-black/30">
-              {preview ? (
-                <img
-                  src={preview}
-                  alt="Selected image"
-                  className="aspect-square w-full object-contain"
-                />
-              ) : (
-                <div className="flex aspect-square items-center justify-center px-8 text-center">
-                  <div>
-                    <p className="text-sm font-medium text-slate-300">
-                      Image preview
-                    </p>
-
-                    <p className="mt-2 text-xs leading-5 text-slate-600">
-                      Your selected image will
-                      appear here before analysis.
-                    </p>
+                  <div className="flex flex-col items-center gap-2 p-8 text-center text-[13px] text-muted-foreground">
+                    <div className="grid w-10 h-10 place-items-center border border-border rounded-lg text-primary mb-1 bg-secondary/50">
+                      <UploadIcon />
+                    </div>
+                    <div>
+                      <strong className="text-foreground text-[14px] font-medium block">Drop an image here</strong>
+                      <p>or click to browse</p>
+                    </div>
+                    <div className="mt-2 text-muted-foreground/70 text-[11px]">
+                      JPEG, PNG, WebP, or BMP
+                    </div>
                   </div>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/bmp"
+                    className="visually-hidden"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="relative flex flex-col items-center justify-center w-full min-h-[300px] border border-border rounded-lg cursor-pointer bg-black/40 overflow-hidden"
+                  onClick={() => inputRef.current?.click()}
+                >
+                  <img src={preview!} alt="Selected image" className="block w-full h-[300px] object-contain" />
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/bmp"
+                    className="visually-hidden"
+                    onChange={handleFileChange}
+                  />
                 </div>
               )}
-            </div>
 
-            <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-5">
-              {prediction ? (
-                <>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                        Result
-                      </p>
+              {file && (
+                <div className="flex items-center gap-2.5 min-h-[41px] mt-4 border-b border-border text-muted-foreground font-mono text-[10px] pb-3">
+                  <div className="inline-flex items-center gap-1.5 text-primary">
+                    <ImageIcon /> Image
+                  </div>
+                  <div className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-foreground/80">{file.name}</div>
+                  <div className="ml-auto whitespace-nowrap hidden sm:block">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                </div>
+              )}
 
-                      <h3
-                        className={`mt-2 text-2xl font-semibold ${
-                          isAi
-                            ? "text-rose-300"
-                            : "text-emerald-300"
-                        }`}
-                      >
-                        {prediction.label}
-                      </h3>
-                    </div>
+              {error && (
+                <Alert variant="destructive" className="mt-4 rounded-md bg-destructive/10 text-destructive border-l-2 border-l-destructive border-y-0 border-r-0">
+                  <AlertDescription className="text-xs">{error}</AlertDescription>
+                </Alert>
+              )}
 
-                    <div className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-400">
-                      {prediction.model}
-                    </div>
+              <Button
+                disabled={!file || loading}
+                onClick={analyzeImage}
+                className="w-full h-11 mt-5 font-bold tracking-tight text-[13px] bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                {loading ? "Analyzing image..." : "Analyze Image"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className={`border-border bg-card shadow-sm rounded-[14px] flex flex-col ${prediction ? "border-muted-foreground/30" : ""}`}>
+            <CardHeader className="flex flex-row items-start justify-between pb-4">
+              <div>
+                <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase">02 / Assessment</p>
+                <CardTitle className="mt-1.5 text-[17px] font-semibold tracking-tight">Analysis Result</CardTitle>
+              </div>
+              <Badge variant="outline" className={`font-mono text-[10px] uppercase gap-1.5 px-2 py-0.5 rounded-full ${loading ? 'border-primary/30 text-primary' : prediction ? 'border-[#77d7ae]/30 text-[#b5e7d0]' : 'border-border text-muted-foreground'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${loading ? 'bg-primary animate-[blink_1.25s_ease-in-out_infinite]' : prediction ? 'bg-[#77d7ae]' : 'bg-muted-foreground'}`} />
+                {loading ? "Analyzing" : prediction ? "Complete" : "Waiting"}
+              </Badge>
+            </CardHeader>
+
+            <CardContent className="flex-1 flex flex-col">
+              {loading ? (
+                <div className="flex-1 grid place-content-center justify-items-center text-center gap-3 min-h-[300px]">
+                  <div className="scanner">
+                    <span />
+                  </div>
+                  <p className="text-muted-foreground text-sm max-w-[285px] leading-relaxed">Running the detector and generating model evidence...</p>
+                </div>
+              ) : !prediction ? (
+                <div className="flex-1 grid place-content-center justify-items-start gap-3 min-h-[300px] text-muted-foreground">
+                  <div className="grid w-10 h-10 place-items-center border border-border rounded-lg text-primary">
+                    <PlaceholderIcon />
+                  </div>
+                  <p className="text-sm max-w-[285px] leading-relaxed m-0">
+                    Upload an image and click “Analyze Image” to view the
+                    detector&apos;s assessment.
+                  </p>
+                </div>
+              ) : (
+                <div className="assessment-content">
+                  <div className="flex items-center gap-3 my-6">
+                    <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_0_4px_rgba(255,255,255,0.05)] ${isAi ? 'bg-[var(--accent-warn)]' : 'bg-[var(--accent-good)]'}`} />
+                    <h3 className={`m-0 text-2xl md:text-3xl font-semibold tracking-tight ${isAi ? 'text-destructive-foreground' : 'text-foreground'}`}>{prediction.label}</h3>
                   </div>
 
-                  <div className="mt-6">
-                    <div className="flex items-end justify-between">
-                      <span className="text-sm text-slate-400">
-                        P(AI-generated)
-                      </span>
-
-                      <span className="text-3xl font-semibold">
-                        {(
-                          prediction.probability_ai_generated *
-                          100
-                        ).toFixed(2)}
-                        %
-                      </span>
+                  <div className="py-5 border-y border-border">
+                    <div className="flex items-baseline justify-between gap-4 text-[13px] text-muted-foreground">
+                      <span>P(AI-generated)</span>
+                      <strong className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+                        {(prediction.probability_ai_generated * 100).toFixed(2)}%
+                      </strong>
                     </div>
 
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                    <div className="probability-scale">
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          isAi
-                            ? "bg-rose-400"
-                            : "bg-emerald-400"
-                        }`}
+                        className={`probability-fill ${isAi ? "bg-[var(--accent-warn)]" : "bg-[var(--accent-good)]"}`}
                         style={{
-                          width: `${
-                            prediction.probability_ai_generated *
-                            100
-                          }%`,
+                          width: `${prediction.probability_ai_generated * 100}%`,
                         }}
                       />
+                      <div
+                        className="threshold-marker"
+                        style={{ left: `${prediction.threshold * 100}%` }}
+                      >
+                        <i />
+                        <b>Threshold {(prediction.threshold * 100).toFixed(2)}%</b>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between mt-6 text-[10px] text-muted-foreground">
+                      <span>Likely real</span>
+                      <span>Likely AI</span>
                     </div>
                   </div>
 
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                      <p className="text-xs text-slate-500">
-                        Decision threshold
-                      </p>
-
-                      <p className="mt-1 text-sm font-medium">
-                        {(
-                          prediction.threshold *
-                          100
-                        ).toFixed(2)}
-                        %
-                      </p>
+                  <dl className="grid grid-cols-2 gap-4 mt-5">
+                    <div className="border-l border-border pl-3">
+                      <dt className="text-[10px] text-muted-foreground">Confidence</dt>
+                      <dd className="mt-1 font-mono text-[14px] text-foreground">{(prediction.confidence * 100).toFixed(2)}%</dd>
                     </div>
-
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                      <p className="text-xs text-slate-500">
-                        Confidence
-                      </p>
-
-                      <p className="mt-1 text-sm font-medium">
-                        {(
-                          prediction.confidence *
-                          100
-                        ).toFixed(2)}
-                        %
-                      </p>
+                    <div className="border-l border-border pl-3">
+                      <dt className="text-[10px] text-muted-foreground">Model Engine</dt>
+                      <dd className="mt-1 font-mono text-[14px] text-foreground">{prediction.model}</dd>
                     </div>
-                  </div>
+                  </dl>
 
                   {prediction.explanation_image && (
-                    <div className="mt-6 border-t border-white/10 pt-6">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                          Model Evidence
-                        </p>
-
-                        <h4 className="mt-2 text-sm font-medium text-slate-200">
-                          Where the prediction changed most
-                        </h4>
-                      </div>
-
-                      <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="evidence-section mt-5 pt-6 border-t border-border">
+                      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
                         <div>
-                          <p className="mb-2 text-[11px] uppercase tracking-wider text-slate-500">
-                            Original
-                          </p>
-
-                          <div className="overflow-hidden rounded-xl border border-white/10 bg-black/30">
-                            {preview && (
-                              <img
-                                src={preview}
-                                alt="Original image"
-                                className="aspect-square w-full object-cover"
-                              />
-                            )}
-                          </div>
+                          <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase">03 / Model Evidence</p>
+                          <h2 className="mt-1.5 text-lg font-semibold tracking-tight">Visual Explanation</h2>
                         </div>
-
-                        <div>
-                          <p className="mb-2 text-[11px] uppercase tracking-wider text-slate-500">
-                            Evidence
-                          </p>
-
-                          <div className="overflow-hidden rounded-xl border border-white/10 bg-black/30">
-                            <img
-                              src={prediction.explanation_image}
-                              alt="SignalScope model evidence overlay"
-                              className="aspect-square w-full object-cover"
-                            />
-                          </div>
+                        <div className="flex flex-wrap justify-end gap-3 text-[11px] text-muted-foreground">
+                          <span className="inline-flex items-center gap-1.5">
+                            <i className="w-2 h-2 rounded-sm bg-[var(--accent-warn)]" /> Supports AI
+                          </span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <i className="w-2 h-2 rounded-sm bg-[var(--accent-good)]" /> Opposes AI
+                          </span>
                         </div>
                       </div>
 
-                      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-slate-400">
-                        <span className="flex items-center gap-1.5">
-                          <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                          Supports AI-generated
-                        </span>
-
-                        <span className="flex items-center gap-1.5">
-                          <span className="h-2.5 w-2.5 rounded-full bg-blue-400" />
-                          Opposes AI-generated
-                        </span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        <figure className="m-0 overflow-hidden border border-border rounded-lg bg-secondary">
+                          <figcaption className="px-3 py-2 border-b border-border font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Original</figcaption>
+                          {preview && <img src={preview} alt="Original image" className="block w-full aspect-[16/10] object-contain hover:scale-[1.012] transition-transform duration-200" />}
+                        </figure>
+                        <figure className="m-0 overflow-hidden border border-border rounded-lg bg-secondary">
+                          <figcaption className="px-3 py-2 border-b border-border font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Evidence Map</figcaption>
+                          <img
+                            src={prediction.explanation_image}
+                            alt="SignalScope model evidence overlay"
+                            className="block w-full aspect-[16/10] object-contain hover:scale-[1.012] transition-transform duration-200"
+                          />
+                        </figure>
                       </div>
 
-                      {prediction.explanation_text && (
-                        <p className="mt-4 text-xs leading-5 text-slate-400">
-                          {prediction.explanation_text}
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pt-4 px-0.5">
+                        <p className="max-w-[700px] m-0 text-muted-foreground text-xs leading-relaxed">
+                          {prediction.explanation_text ||
+                            "This evidence map shows the regions that most influenced the model's decision."}
                         </p>
-                      )}
 
-                      {prediction.explanation_evidence && (
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                            <p className="text-xs text-slate-500">
-                              Supporting influence
-                            </p>
-
-                            <p className="mt-1 text-sm font-medium">
-                              {(
-                                prediction.explanation_evidence
-                                  .max_positive_influence * 100
-                              ).toFixed(2)}
-                              %
-                            </p>
-                          </div>
-
-                          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                            <p className="text-xs text-slate-500">
-                              Opposing influence
-                            </p>
-
-                            <p className="mt-1 text-sm font-medium">
-                              {(
-                                Math.abs(
+                        {prediction.explanation_evidence && (
+                          <dl className="flex gap-6 shrink-0 m-0">
+                            <div>
+                              <dt className="text-[10px] text-muted-foreground">Max Support</dt>
+                              <dd className="mt-1 font-mono text-xs text-foreground">
+                                {(
                                   prediction.explanation_evidence
-                                    .max_negative_influence
-                                ) * 100
-                              ).toFixed(2)}
-                              %
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      {prediction.explanation_method && (
-                        <p className="mt-3 text-[11px] text-slate-600">
-                          Method: {prediction.explanation_method}
-                        </p>
-                      )}
+                                    .max_positive_influence * 100
+                                ).toFixed(1)}
+                                %
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="text-[10px] text-muted-foreground">Max Opposing</dt>
+                              <dd className="mt-1 font-mono text-xs text-foreground">
+                                {(
+                                  Math.abs(
+                                    prediction.explanation_evidence
+                                      .max_negative_influence
+                                  ) * 100
+                                ).toFixed(1)}
+                                %
+                              </dd>
+                            </div>
+                          </dl>
+                        )}
+                      </div>
                     </div>
                   )}
-
-                  <p className="mt-5 text-xs leading-5 text-slate-500">
-                    This is a statistical assessment.
-                    It may be wrong and should not be
-                    treated as proof of image origin.
-                  </p>
-                </>
-              ) : (
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                    Analysis
-                  </p>
-
-                  <p className="mt-3 text-sm leading-6 text-slate-500">
-                    Upload an image and click
-                    “Analyze Image” to see the
-                    detector's assessment.
-                  </p>
                 </div>
               )}
-            </div>
-          </div>
-        </section>
+            </CardContent>
+          </Card>
+        </div>
 
         <section
-          className="evaluation-section"
+          className="evaluation-section mt-10 pt-8 border-t border-border"
           aria-labelledby="evaluation-title"
         >
-          <div className="evaluation-heading">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
             <div>
-              <p className="section-label">04 / Evaluation</p>
-              <h2 id="evaluation-title">Generalization snapshot</h2>
+              <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase">04 / Evaluation</p>
+              <h2 id="evaluation-title" className="mt-1.5 text-xl font-semibold tracking-tight">Generalization snapshot</h2>
             </div>
-            <div className="evaluation-badge">Internal · pseudo-unseen</div>
+            <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground bg-transparent border-border rounded-full px-2.5 py-1">Internal · pseudo-unseen</Badge>
           </div>
 
-          <div className="evaluation-callout">
+          <Alert className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border border-border border-l-2 border-l-primary rounded-lg bg-card">
             <div>
-              <p className="evaluation-kicker">
+              <p className="m-0 mb-1 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
                 Held-out generator used for internal testing
               </p>
-              <strong>VQDM</strong>
+              <AlertTitle className="text-lg font-semibold m-0 tracking-tight">VQDM</AlertTitle>
             </div>
-            <p>
+            <AlertDescription className="max-w-[620px] text-[11px] text-muted-foreground leading-relaxed m-0">
               These results come from SignalScope&apos;s internal
               pseudo-unseen split. They are not the official organizer
               held-out test score.
-            </p>
+            </AlertDescription>
+          </Alert>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+            <Card className="border-border bg-secondary shadow-none rounded-lg p-4">
+              <span className="block text-[9px] font-mono uppercase tracking-wider text-muted-foreground">ROC-AUC</span>
+              <strong className="block mt-2 text-2xl font-medium tracking-tight text-foreground">0.728</strong>
+              <small className="block mt-1.5 text-[10px] text-muted-foreground/80 leading-snug">Primary generalization metric</small>
+            </Card>
+            <Card className="border-border bg-card shadow-none rounded-lg p-4">
+              <span className="block text-[9px] font-mono uppercase tracking-wider text-muted-foreground">Macro-F1</span>
+              <strong className="block mt-2 text-2xl font-medium tracking-tight text-foreground">0.511</strong>
+              <small className="block mt-1.5 text-[10px] text-muted-foreground/80 leading-snug">Frozen validation threshold</small>
+            </Card>
+            <Card className="border-border bg-card shadow-none rounded-lg p-4">
+              <span className="block text-[9px] font-mono uppercase tracking-wider text-muted-foreground">Accuracy</span>
+              <strong className="block mt-2 text-2xl font-medium tracking-tight text-foreground">57.4%</strong>
+              <small className="block mt-1.5 text-[10px] text-muted-foreground/80 leading-snug">1,000-image pseudo-unseen set</small>
+            </Card>
+            <Card className="border-border bg-card shadow-none rounded-lg p-4">
+              <span className="block text-[9px] font-mono uppercase tracking-wider text-muted-foreground">FPR</span>
+              <strong className="block mt-2 text-2xl font-medium tracking-tight text-foreground">6.6%</strong>
+              <small className="block mt-1.5 text-[10px] text-muted-foreground/80 leading-snug">Real images falsely flagged</small>
+            </Card>
           </div>
 
-          <div className="evaluation-metrics">
-            <article className="evaluation-metric evaluation-metric-primary">
-              <span>ROC-AUC</span>
-              <strong>0.728</strong>
-              <small>Primary generalization metric</small>
-            </article>
-            <article className="evaluation-metric">
-              <span>Macro-F1</span>
-              <strong>0.511</strong>
-              <small>Frozen validation threshold</small>
-            </article>
-            <article className="evaluation-metric">
-              <span>Accuracy</span>
-              <strong>57.4%</strong>
-              <small>1,000-image pseudo-unseen set</small>
-            </article>
-            <article className="evaluation-metric">
-              <span>FPR</span>
-              <strong>6.6%</strong>
-              <small>Real images falsely flagged</small>
-            </article>
-          </div>
-
-          <div className="evaluation-details">
-            <article className="eval-card">
-              <div className="eval-card-heading">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.75fr] gap-3 mt-3">
+            <Card className="border-border bg-card shadow-none rounded-lg p-4 md:p-5">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="section-label">Decision behavior</p>
-                  <h3>Confusion matrix</h3>
+                  <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase">Decision behavior</p>
+                  <h3 className="mt-1.5 text-[15px] font-semibold tracking-tight">Confusion matrix</h3>
                 </div>
-                <span className="eval-card-meta">threshold 64.69%</span>
+                <span className="font-mono text-[9px] text-muted-foreground">threshold 64.69%</span>
               </div>
 
               <div
@@ -584,11 +482,19 @@ export default function Home() {
                 role="table"
                 aria-label="Confusion matrix for internal pseudo-unseen VQDM evaluation"
               >
-                <div className="matrix-corner" role="columnheader">&nbsp;</div>
-                <div className="matrix-axis" role="columnheader">Pred. real</div>
-                <div className="matrix-axis" role="columnheader">Pred. AI</div>
+                <div className="matrix-corner" role="columnheader">
+                  &nbsp;
+                </div>
+                <div className="matrix-axis" role="columnheader">
+                  Pred. real
+                </div>
+                <div className="matrix-axis" role="columnheader">
+                  Pred. AI
+                </div>
 
-                <div className="matrix-axis matrix-side" role="rowheader">Actual real</div>
+                <div className="matrix-axis matrix-side" role="rowheader">
+                  Actual real
+                </div>
                 <div className="matrix-cell matrix-good">
                   <strong>467</strong>
                   <span>True negative</span>
@@ -598,7 +504,9 @@ export default function Home() {
                   <span>False positive</span>
                 </div>
 
-                <div className="matrix-axis matrix-side" role="rowheader">Actual AI</div>
+                <div className="matrix-axis matrix-side" role="rowheader">
+                  Actual AI
+                </div>
                 <div className="matrix-cell matrix-soft">
                   <strong>393</strong>
                   <span>False negative</span>
@@ -608,35 +516,46 @@ export default function Home() {
                   <span>True positive</span>
                 </div>
               </div>
-            </article>
+            </Card>
 
-            <article className="eval-card">
-              <div className="eval-card-heading">
+            <Card className="border-border bg-card shadow-none rounded-lg p-4 md:p-5">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="section-label">Evaluation protocol</p>
-                  <h3>Generalization-first split</h3>
+                  <p className="m-0 text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.13em] uppercase">Evaluation protocol</p>
+                  <h3 className="mt-1.5 text-[15px] font-semibold tracking-tight">Generalization-first split</h3>
                 </div>
               </div>
 
-              <dl className="protocol-list">
-                <div><dt>Training</dt><dd>22,000 images</dd></div>
-                <div><dt>Validation</dt><dd>16,000 images</dd></div>
-                <div><dt>Pseudo-unseen</dt><dd>1,000 VQDM images</dd></div>
-                <div><dt>Calibration</dt><dd>Validation only</dd></div>
+              <dl className="mt-4 pt-1 border-t border-border">
+                <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-border">
+                  <dt className="text-[10px] text-muted-foreground">Training</dt>
+                  <dd className="m-0 font-mono text-[11px] text-foreground">22,000 images</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-border">
+                  <dt className="text-[10px] text-muted-foreground">Validation</dt>
+                  <dd className="m-0 font-mono text-[11px] text-foreground">16,000 images</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-border">
+                  <dt className="text-[10px] text-muted-foreground">Pseudo-unseen</dt>
+                  <dd className="m-0 font-mono text-[11px] text-foreground">1,000 VQDM images</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4 py-2.5 border-b border-border">
+                  <dt className="text-[10px] text-muted-foreground">Calibration</dt>
+                  <dd className="m-0 font-mono text-[11px] text-foreground">Validation only</dd>
+                </div>
               </dl>
 
-              <p className="protocol-note">
+              <p className="mt-3 text-[11px] text-muted-foreground leading-relaxed">
                 The unseen generator is kept outside model training and
                 calibration so the internal score measures transfer to a
                 generator family the model did not see during training.
               </p>
-            </article>
+            </Card>
           </div>
         </section>
 
-        <footer className="border-t border-white/10 pt-6 text-xs text-slate-600">
-          SignalScope · Likelihood-based AI image
-          detection
+        <footer className="mt-8 pt-4 border-t border-border text-[10px] text-muted-foreground">
+          SignalScope · Likelihood-based AI image detection
         </footer>
       </div>
     </main>
