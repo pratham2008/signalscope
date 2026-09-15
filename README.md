@@ -3,6 +3,8 @@
 ## Submission Materials
 
 - 📄 **One-Page Model Report:** [View Report](https://docs.google.com/document/d/1ZxnaEloS0hog-_vpLrDbG8kZhfRy9NFg/edit?usp=sharing&ouid=109365953735455283867&rtpof=true&sd=true)
+- 🎥 **Demo video:** [View Video](https://drive.google.com/file/d/1CQ8vyEp9nlhbAnBOY2MO4nrUXoDOK8mk/view?usp=sharing)
+-  📊 **Project Presentation:** [View Presentation](https://docs.google.com/presentation/d/1jEHCZn531zbrn74UwRwZmVnqd0_XOHPk/edit?usp=sharing&ouid=109365953735455283867&rtpof=true&sd=true)
 
 **Telling Real From Synthetic in the Age of Generative Media**
 
