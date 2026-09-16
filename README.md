@@ -167,6 +167,9 @@ The system should not be used as proof of provenance, identity attribution, or a
 
 ## Quick Start
 
+> **Windows:** Use **PowerShell** for the commands in the Windows setup below.
+> **Linux:** Use your normal terminal shell and adapt the commands where necessary.
+
 ### 1. Clone the repository
 
 ```powershell
@@ -251,7 +254,22 @@ Keep this terminal running.
 
 ### 5. Start the frontend
 
-Open a **second PowerShell terminal** in the project root:
+Open a **second PowerShell terminal** in the project root.
+
+> **PowerShell note:** On some Windows systems, PowerShell blocks the `npm.ps1` script because of its execution policy. If `npm install` or `npm run dev` reports that `npm.ps1` cannot be loaded because script execution is disabled, run this in the **same PowerShell window**:
+>
+> ```powershell
+> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+> ```
+>
+> Then retry the npm command.
+>
+> As a fallback, you can also use `npm.cmd` instead of `npm`:
+>
+> ```powershell
+> npm.cmd install
+> npm.cmd run dev
+> ```
 
 ```powershell
 cd frontend
@@ -266,6 +284,8 @@ http://localhost:3000
 ```
 
 Upload a JPEG, PNG, WebP, or BMP image and click **Analyze Image**.
+
+> **First analysis may take longer:** The first prediction after starting the backend can take extra time while the model and its dependencies are initialized. Subsequent analyses should normally respond faster.
 
 ## Direct Prediction Interface
 
