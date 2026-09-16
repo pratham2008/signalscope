@@ -58,8 +58,6 @@ Input image ─────────────┤   lightweight trainable C
                     likelihood + thresholded verdict
                               │
                     influence-based evidence map
-<<<<<<< HEAD
-=======
 ```
 
 ### Training Configuration
@@ -312,4 +310,3 @@ SignalScope was developed by our team during the SIH 2026 internal hackathon per
 2. Zhu, M. et al. (2023). **GenImage: A Million-Scale Benchmark for Detecting AI-Generated Image.** NeurIPS.
 3. Ojha, U., Li, Y. & Lee, Y. J. (2023). **Towards Universal Fake Image Detectors that Generalize Across Generative Models.** CVPR.
 4. Frank, J., Eisenhofer, T., Schönherr, L., Fischer, A., Kolossa, D. & Holz, T. (2020). **Leveraging Frequency Analysis for Deep Fake Image Recognition.** CVPR.
->>>>>>> 11a8468 (Update Windows README instructions)
