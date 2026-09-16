@@ -204,13 +204,33 @@ pip install -r requirements.txt
 
 ### 3. Model checkpoint
 
-The production checkpoint used by SignalScope is:
+The production checkpoint used by SignalScope is located at:
 
-```text
-model/dual/clip_fft_resolution.pt
+`model/dual/clip_fft_resolution.pt`
+
+This is a **file path, not a command**. The checkpoint must be present at that path before starting inference.
+
+You can verify that it exists before starting the backend.
+
+#### Windows PowerShell
+
+```powershell
+Test-Path .\model\dual\clip_fft_resolution.pt
 ```
 
-The checkpoint must be present at that path before starting inference. Large model weights may be distributed separately from the Git repository.
+Expected result:
+
+```text
+True
+```
+
+#### Linux / macOS
+
+```bash
+test -f ./model/dual/clip_fft_resolution.pt && echo "Model checkpoint found"
+```
+
+Large model weights may be distributed separately from the Git repository.
 
 ### 4. Start the backend
 
@@ -249,7 +269,7 @@ Upload a JPEG, PNG, WebP, or BMP image and click **Analyze Image**.
 
 ## Direct Prediction Interface
 
-The repository also exposes the required single-image prediction function:
+The repository also exposes the required single-image prediction function. It returns the predicted label and confidence for a single image:
 
 ```python
 from predict import predict
@@ -266,7 +286,7 @@ print(label, confidence)
 - Treat degradation tests separately from clean-set metrics.
 - Do not report internal pseudo-unseen results as the official organizer score.
 
-A judge should be able to reproduce a prediction from the README and the released model weights without needing access to the team's development machine.
+A judge should be able to reproduce a prediction from the README and the provided model checkpoint without needing access to the team's development machine.
 
 ## Repository Layout
 
