@@ -16,19 +16,19 @@ SignalScope is an analytical aid, not provenance certification. Its output is de
 ## Submission Materials
 
 - 📄 **One-Page Model Report:** [View Report](https://docs.google.com/document/d/1ZxnaEloS0hog-_vpLrDbG8kZhfRy9NFg/edit?usp=sharing&ouid=109365953735455283867&rtpof=true&sd=true)
-- 🎥 **Demo video:** [View Video](https://drive.google.com/file/d/1CQ8vyEp9nlhbAnBOY2MO4nrUXoDOK8mk/view?usp=sharing)
+- 🎥 **Demo Video:** [View Video](https://drive.google.com/file/d/1CQ8vyEp9nlhbAnBOY2MO4nrUXoDOK8mk/view?usp=sharing)
 - 📊 **Project Presentation:** [View Presentation](https://docs.google.com/presentation/d/1jEHCZn531zbrn74UwRwZmVnqd0_XOHPk/edit?usp=sharing&ouid=109365953735455283867&rtpof=true&sd=true)
 
-## What we built
+## What We Built
 
-### Core task
+### Core Task
 
 - Binary real-vs-AI-generated image classification.
 - Single-image prediction interface through a local web application.
 - Validation-only calibration and threshold selection.
 - Generalisation-first evaluation with a generator family held out from training/calibration as an internal pseudo-unseen test.
 
-### Implemented extensions
+### Implemented Extensions
 
 - Influence-based visual explanation for individual predictions.
 - Responsive browser UI for upload, assessment, model evidence, and evaluation results.
@@ -43,7 +43,7 @@ SignalScope uses two complementary streams:
 Input image ─────────────┤   normalized 512-D embedding  ├─> 128-D semantic
                          └──────────────────────────────┘
 
-                         ┌─ Log-scaled 2-D FFT encoder ──┐
+                         ┌─ Log-scaled 2-D FFT encoder ─┐
 Input image ─────────────┤   lightweight trainable CNN   ├─> 128-D frequency
                          └──────────────────────────────┘
 
