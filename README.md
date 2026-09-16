@@ -39,7 +39,7 @@ SignalScope is an analytical aid, not provenance certification. Its output is de
 SignalScope uses two complementary streams:
 
 ```text
-                         ┌─ Frozen OpenAI CLIP ViT-B/32 ─┐
+                          ┌─ Frozen OpenAI CLIP ViT-B/32 ─┐
 Input image ─────────────┤   normalized 512-D embedding  ├─> 128-D semantic
                          └──────────────────────────────┘
 
@@ -47,15 +47,16 @@ Input image ─────────────┤   normalized 512-D embedd
 Input image ─────────────┤   lightweight trainable CNN   ├─> 128-D frequency
                          └──────────────────────────────┘
 
-                 semantic ⊙ frequency  ──> interaction scalar
+             elementwise semantic × frequency
+                         └───────────────> interaction scalar
 
              [128 semantic + 128 frequency + 1 interaction]
                               │
-                          257 -> 64 -> 1
+                          257 → 64 → 1
                               │
                        temperature scaling
                               │
-                    likelihood + thresholded verdict
+             calibrated likelihood + thresholded verdict
                               │
                     influence-based evidence map
 ```
