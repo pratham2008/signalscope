@@ -14,3 +14,5 @@ data/processed/
 
 .env
 .DS_Store
+
+!model/dual/clip_fft_resolution.pt
