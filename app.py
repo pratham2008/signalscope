@@ -32,7 +32,7 @@ with gr.Blocks(title="SignalScope") as demo:
     with gr.Row():
         image_input = gr.Image(type="pil", label="Image")
         heatmap_output = gr.Image(label="Model-sensitivity overlay")
-    model_input = gr.Textbox(label="Checkpoint path (optional)", placeholder="model/dual/signalscope_dual_stream.pt")
+    model_input = gr.Textbox(label="Checkpoint path (optional)", placeholder="model/dual/clip_fft_resolution.pt")
     run = gr.Button("Analyse image", variant="primary")
     scores = gr.Label(label="Assessment")
     explanation = gr.Textbox(label="Explanation", lines=4)

@@ -1,8 +1,8 @@
-"""Generator-invariant, dual-stream image detector.
+"""Legacy ResNet18 + FFT dual-stream detector.
 
-The semantic stream and FFT stream intentionally observe different evidence.
-They are fused from logits, not probabilities, so calibration can be applied once
-to the combined decision score.
+This module is retained for legacy checkpoints and diagnostic experiments.
+It is NOT the production SignalScope model. The production checkpoint uses
+the frozen CLIP ViT-B/32 + FFT architecture defined in scripts/train_clip_fft.py.
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ class FrequencyEncoder(nn.Module):
 
 
 class DualStreamDetector(nn.Module):
-    """ResNet semantic probe + FFT CNN with a learned interaction gate."""
+    """Legacy ResNet18 semantic probe + FFT CNN with learned fusion."""
 
     def __init__(self, pretrained_semantic: bool = False, freeze_semantic: bool = False, frequency_width: int = 32) -> None:
         super().__init__()

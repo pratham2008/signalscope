@@ -1,22 +1,14 @@
 {
-  "samples": 100,
-  "roc_auc": 0.97,
-  "accuracy": 0.93,
-  "macro_f1": 0.9299369432489241,
-  "false_positive_rate": 0.04,
-  "threshold": 0.8519436717033387,
+  "samples": 16000,
+  "roc_auc": 0.966917296875,
+  "accuracy": 0.8883125,
+  "macro_f1": 0.8878858667457886,
+  "false_positive_rate": 0.05,
+  "threshold": 0.6469063758850099,
   "confusion_matrix": {
-    "tn": 48,
-    "fp": 2,
-    "fn": 5,
-    "tp": 45
-  },
-  "auc_95_ci": [
-    0.9357287150408136,
-    0.9927290188802793
-  ],
-  "per_generator_auc": {
-    "cifake": 0.97
-  },
-  "figures": []
+    "tn": 7600,
+    "fp": 400,
+    "fn": 1387,
+    "tp": 6613
+  }
 }

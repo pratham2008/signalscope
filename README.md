@@ -38,6 +38,12 @@ SignalScope is an analytical aid, not provenance certification. Its output is de
 
 SignalScope uses two complementary streams:
 
+### Production implementation
+
+The submitted production checkpoint uses the **frozen OpenAI CLIP ViT-B/32 + trainable FFT fusion architecture**. Its model definition is maintained in `scripts/train_clip_fft.py`; `scripts/train_clip_fft_resolution.py` contains the selected training pipeline with resolution degradation augmentation.
+
+`src/core/dual_model.py` is retained for legacy checkpoints and diagnostic experiments and is **not** the architecture used by the submitted production checkpoint.
+
 ```text
                           ┌─ Frozen OpenAI CLIP ViT-B/32 ─┐
 Input image ─────────────┤   normalized 512-D embedding  ├─> 128-D semantic
@@ -233,7 +239,7 @@ True
 test -f ./model/dual/clip_fft_resolution.pt && echo "Model checkpoint found"
 ```
 
-Large model weights may be distributed separately from the Git repository.
+The production checkpoint is included in this repository, so a fresh clone contains the model required for local inference.
 
 ### 4. Start the backend
 
@@ -319,18 +325,20 @@ A judge should be able to reproduce a prediction from the README and the provide
 │   └── app/globals.css                 Analytical UI styling
 ├── src/
 │   └── core/
-│       ├── dual_model.py               CLIP + FFT fusion model
+│       ├── dual_model.py               Legacy ResNet18 + FFT detector
+│       ├── checkpoint.py               Production/legacy checkpoint loader
 │       ├── calibration.py              Temperature scaling
 │       ├── explain.py                  Influence-based explanation
 │       └── metrics.py                  Evaluation metrics
 ├── scripts/
-│   ├── train_clip_fft_resolution.py    Champion training pipeline
+│   ├── train_clip_fft.py               Production CLIP + FFT model definition
+│   ├── train_clip_fft_resolution.py    Production training pipeline with resolution augmentation
 │   └── evaluate_clip_fft.py            Split evaluation
 ├── model/
 │   └── dual/
 │       └── clip_fft_resolution.pt      Production checkpoint
 ├── report/
-│   └── SignalScope_Model_Report.pdf    One-page model report
+│   └── MODEL_REPORT.md    One-page model report
 ├── predict.py                          Single-image prediction interface
 └── requirements.txt                    Python environment
 ```

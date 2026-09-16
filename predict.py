@@ -20,7 +20,7 @@ from src.core.dual_model import DualStreamDetector
 from src.core.explain import grounded_explanation, overlay, saliency_map, clip_fft_saliency, occlusion_saliency
 
 
-DEFAULT_MODEL_PATH = "model/dual/signalscope_dual_stream.pt"
+DEFAULT_MODEL_PATH = "model/dual/clip_fft_resolution.pt"
 LEGACY_MODEL_PATH = "model/core/core_detector.pt"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -57,7 +57,7 @@ def load_model(model_path: str | Path | None = None):
     if not path.exists() and model_path is None:
         path = Path(LEGACY_MODEL_PATH)
     if not path.exists():
-        raise FileNotFoundError(f"Model checkpoint not found: {path}. Run src/train_dual.py first.")
+        raise FileNotFoundError(f"Model checkpoint not found: {path}. Make sure the production checkpoint is present at the configured model path.")
     return load_detector(path, DEVICE)
 
 

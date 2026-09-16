@@ -1,10 +1,15 @@
-torch>=2.2
-torchvision>=0.17
-numpy>=1.26
-Pillow>=10.0
-matplotlib>=3.8
-gradio>=5.0
-fastapi>=0.110
-uvicorn>=0.27
-python-multipart>=0.0.9
-open_clip_torch>=3.0
+numpy==2.5.2; platform_system == "Linux"
+numpy==2.5.3; platform_system == "Windows"
+
+Pillow==12.3.0
+
+torch==2.9.1; platform_system == "Linux"
+torchvision==0.24.1; platform_system == "Linux"
+
+torch==2.14.0; platform_system == "Windows"
+torchvision==0.29.0; platform_system == "Windows"
+
+open_clip_torch==3.3.0
+fastapi==0.141.1
+uvicorn==0.53.0
+python-multipart==0.0.32
