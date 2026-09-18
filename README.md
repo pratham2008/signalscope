@@ -45,12 +45,12 @@ The submitted production checkpoint uses the **frozen OpenAI CLIP ViT-B/32 + tra
 `src/core/dual_model.py` is retained for legacy checkpoints and diagnostic experiments and is **not** the architecture used by the submitted production checkpoint.
 
 ```text
-                          ┌─ Frozen OpenAI CLIP ViT-B/32 ─┐
+                         ┌─ Frozen OpenAI CLIP ViT-B/32 ─┐
 Input image ─────────────┤   normalized 512-D embedding  ├─> 128-D semantic
-                         └──────────────────────────────┘
+                         └───────────────────────────────┘
 
                          ┌─ Log-scaled 2-D FFT encoder ─┐
-Input image ─────────────┤   lightweight trainable CNN   ├─> 128-D frequency
+Input image ─────────────┤   lightweight trainable CNN  ├─> 128-D frequency
                          └──────────────────────────────┘
 
              elementwise semantic × frequency
